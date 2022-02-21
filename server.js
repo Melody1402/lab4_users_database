@@ -1,45 +1,20 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const userModel = require('./User');
+const express = require("express");
+const mongoose = require("mongoose");
+const userRouter = require("./routes/UserRoutes.js");
 
 const app = express();
-app.use(express.json())
+app.use(express.json());
 
-mongoose.connect('mongodb+srv://Melodya1402:qazzaq@cluster0.muxfz.mongodb.net/Users?retryWrites=true&w=majority', {
-useNewUrlParser: true,
-useUnifiedTopology: true
-}).then(success => {
-console.log('Success Mongodb connection')
-}).catch(err => {
-console.log('Error Mongodb connection')
+mongoose.connect(
+  "mongodb+srv://dbMelody:qazzaq@cluster0.jtt9c.mongodb.net/Users?retryWrites=true&w=majority",
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }
+);
+
+app.use(userRouter);
+
+app.listen(3000, () => {
+  console.log("Server is running...");
 });
-
-
-app.get('/users', async (req, res) => {
-    const users = await userModel.find({});
-    try {
-    res.status(200).send(users);
-    } catch (err) {
-    res.status(500).send(err);
-    }
-});
-
-
-app.post('/users', async (req, res) => {
-
-    const user = new userModel(req.body);
-    
-    try {
-    await user.save((err) => {
-        if(err){
-        res.send(err)
-        }else{
-        res.send(user);
-        }
-    });
-    } catch (err) {
-    res.status(500).send(err);
-    }
-});
-
-app.listen(3000, () => { console.log('Server is running...') });
